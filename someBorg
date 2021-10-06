@@ -1,0 +1,160 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.GamerServices;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
+
+namespace someBorg
+{
+    /// <summary>
+    /// This is the main type for your game
+    /// </summary>
+    public class Game1 : Microsoft.Xna.Framework.Game
+    {
+        KeyboardState oldKb = Keyboard.GetState();
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+        Texture2D bulletTex;
+        Rectangle bulletRect, bounds;
+
+        Vector2 bulPos;
+        int poo;
+        float vel;
+        Boolean spacePressed;
+        public Game1()
+        {
+            graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+        }
+
+        /// <summary>
+        /// Allows the game to perform any initialization it needs to before starting to run.
+        /// This is where it can query for any required services and load any non-graphic
+        /// related content.  Calling base.Initialize will enumerate through any components
+        /// and initialize them as well.
+        /// </summary>
+        protected override void Initialize()
+        {
+            bounds = new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+            spacePressed = false;
+            // TODO: Add your initialization logic here
+            bulPos = new Vector2(10, 10);
+            vel = 10;
+            bulletRect = new Rectangle((int)bulPos.X, (int)bulPos.Y, 100, 100);
+            base.Initialize();
+        }
+
+        /// <summary>
+        /// LoadContent will be called once per game and is the place to load
+        /// all of your content.
+        /// </summary>
+        protected override void LoadContent()
+        {
+            // Create a new SpriteBatch, which can be used to draw textures.
+            bulletTex = this.Content.Load<Texture2D>("bullet");
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            // TODO: use this.Content to load your game content here
+        }
+
+        /// <summary>
+        /// UnloadContent will be called once per game and is the place to unload
+        /// all content.
+        /// </summary>
+        protected override void UnloadContent()
+        {
+            // TODO: Unload any non ContentManager content here
+        }
+
+        /// <summary>
+        /// Allows the game to run logic such as updating the world,
+        /// checking for collisions, gathering input, and playing audio.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        protected override void Update(GameTime gameTime)
+        {
+            KeyboardState kb = Keyboard.GetState();
+            // Allows the game to exit
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+                this.Exit();
+            if (kb.IsKeyDown(Keys.W) && !oldKb.IsKeyDown(Keys.W))
+            {
+                poo = 0;
+            }
+            if (kb.IsKeyDown(Keys.A) && !oldKb.IsKeyDown(Keys.A))
+            {
+                poo = 1;
+            }
+            if (kb.IsKeyDown(Keys.S) && !oldKb.IsKeyDown(Keys.S))
+            {
+                poo = 2;
+            }
+            if (kb.IsKeyDown(Keys.D) && !oldKb.IsKeyDown(Keys.D))
+            {
+                poo = 3;
+            }
+            if(kb.IsKeyDown(Keys.Space) && !oldKb.IsKeyDown(Keys.Space))
+            {
+                spacePressed = true;
+            }   
+            if (spacePressed && bulletRect.Intersects(bounds))
+            {
+                if (poo == 0)
+                {
+                    bulPos.Y -= vel;
+                    bulletRect = new Rectangle((int)bulPos.X, (int)bulPos.Y, 100, 100);
+                    
+                }
+                if (poo == 1)
+                {
+                    bulPos.X -= vel;
+                    bulletRect = new Rectangle((int)bulPos.X, (int)bulPos.Y, 100, 100);
+                    
+                }
+                if (poo == 2)
+                {
+                    bulPos.Y += vel;
+                    bulletRect = new Rectangle((int)bulPos.X, (int)bulPos.Y, 100, 100);
+                    
+                }
+                if (poo == 3)
+                {
+                    bulPos.X += vel;
+                    bulletRect = new Rectangle((int)bulPos.X, (int)bulPos.Y, 100, 100);
+                    
+                }
+                
+            } else if (!bulletRect.Intersects(bounds))
+            {
+                spacePressed = false;
+                bulPos = new Vector2(10, 10);
+                bulletRect = new Rectangle((int)bulPos.X, (int)bulPos.Y, 100, 100);
+            }
+
+            oldKb = kb;
+            // TODO: Add your update logic here
+
+            base.Update(gameTime);
+        }
+
+        /// <summary>
+        /// This is called when the game should draw itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+            spriteBatch.Draw(bulletTex, bulletRect, Color.White);
+            spriteBatch.End();
+            base.Draw(gameTime);
+        }
+    }
+}
